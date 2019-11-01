@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	    <meta http-equiv="x-ua-compatible" content="IE=11;IE=8">
+		<title>pdf格式转化</title>
+		<link rel="shortcut icon" th:href="@{/images/icon/web_logo.ico}" >
+		<link rel="stylesheet" th:href="@{/css/public.css}" />
+        <link rel="stylesheet" th:href="@{/css/format.css}" />
+        <script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+	</head>
+	<body>
+		<div class="pdfbody">
+			<!-- 菜单按钮 S -->
+				<div class="menu_wrap">
+				 	<ul style="display: inline-block;">
+				 		<li><a href="javascript:void(0)" class="fileWj filePublic" id="add_file_btn">添加文件</a></li>
+				 		<li>
+							<a href="javascript:void(0)" class="fileWjj filePublic" id="add_files_btn">添加文件夹</a>
+							<input type="file" id="fileFolder" name="fileFolder" webkitdirectory multiple style="display: none;"/>
+						</li>
+				 		<li><a href="javascript:void(0)" class="deleteBtn filePublic" id="clear_file_btn">清空列表</a></li>
+				 		<li><a href="javascript:void(0)" class="fileWjj filePublic" id="transfer_all_btn">全部转换</a></li>
+				 	</ul>
+				    <!-- 点击拖拽文件区域 S -->
+	                <div class="file_wrap" style="height: 80px;display: inline-block;">
+	                    <div class="file_main" id="drag_area">
+	                        <i></i>
+	                        <span style="width: 96px;">
+	                            <a href="javascript:void(0)">拖拽文件添加</a>
+	                        </span>
+	                    </div>
+	                </div>
+	                <!-- 点击拖拽文件区域 E --> 	
+				</div>
+			<!-- 菜单按钮 E -->
+
+			<!-- 文件上传表格 S -->
+				<div class="wj_table" style="display:block;">
+					<div class="table_main">
+						<table>
+						    <thead>
+								<tr>
+									<th width="5%">序号</th>
+									<th>文件名称</th>
+									<th width="8%">文件大小（KB）</th>
+									<th>状态</th>
+									<th width="15%">操作</th>
+								</tr>
+							</thead>
+							<tbody id="position_tbody">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			<!-- 文件上传表格 E -->
+			<!-- 转换区域 S -->
+				<div class="zh_wrap">
+				</div>
+			<!-- 转换区域 E -->
+		</div>
+	
+	<script th:src="@{/js/pdf.js}"></script>
+	<script th:src="@{/js/temple-1.0.0.js}"></script>
+	<script th:src="@{/js/drag-1.0.1.js}"></script>
+	<script th:inline="javascript">
+	    var basePath = [[${'http://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath()}]];
+	
+	    $('#add_file_btn').click(function(){
+	    	var data = {'seqNo': getSeqNo()};
+	    	var tr = Temple.load('pdf_td_tr', data);
+	    	$('#position_tbody').append(tr);
+	    	$('#position_tbody tr').last().find('input[type="file"]').click();
+	    });
+	    
+	    $('#clear_file_btn').click(function(){
+	    	$('#position_tbody').empty();
+	    });
+	    
+	    $('#position_tbody').on('change','tr td input[type="file"]',function(){
+	    	if(!this.value){
+	    		$(this).parents('tr').remove();
+	    		return;
+	    	}
+	    	var fileName = this.value && this.value.substr(this.value.lastIndexOf('\\')+1) || this.value;
+	    	if(!checkFileType(fileName)){
+	    		alert('仅支持office word、excel、ppt办公文件转换');
+	    		$(this).parents('tr').remove();
+	    		return;
+	    	}
+	    	$(this).next('span').html(fileName);
+	    	$(this).parents('tr').show();
+	    });
+	    
+	    function checkFileType(fileName){
+	    	var type = fileName.substr(fileName.lastIndexOf('.')+1);
+	        var types = 'doc,docx,xls,xlsx,ppt,pptx';
+	        return new RegExp(type).test(types);
+	    }
+	    function getSeqNo(){
+	    	return 'F'+ (Math.random()+'').replace('.','').substr(1,6);
+	    }
+	    
+	    /**
+	    * 接收广播基础方法（仿安卓广播BrocastReceiver）
+	    */
+	    function received(data){
+	    	//刷新进度条
+	    	refreshProgress(data);
+	    }
+	    
+	    function refreshProgress(data){
+	    	if(!data.fileID) {
+	    		return;
+	    	}
+	    	
+	    	var str = data.finshed === '1' && '上传完成' 
+	    	       || data.finshed === '2' && '转换中' 
+	    	       || data.finshed === '3' && '转换完成' 
+	    	       || data.finshed === '9' && '转换失败' 
+	    	       || '上传中';
+	    	var tds = $('#'+data.fileID).find('td');
+	    	tds.eq(2).html(data.fileSize);
+	    	tds.eq(3).find('span').find('i').css('width',data.progress + '%');
+	    	tds.eq(3).find('.font-num').html(data.progress + '%');
+	    	tds.eq(3).find('.font-state').html(str);
+			data.finshed === '3' && tds.eq(4).find('span').html('<a href="javascript:void(0)">[下载]</a>');
+	    }
+	    
+	    function uploadSingle(target){
+	    	var fileID = $(target).parents('tr').attr('id');
+	    	var file = $(target).parents('tr').find('input[type="file"]')[0];
+	    	var tempFile = file.files[0];
+	    	if(file.files.length == 0){
+	    		tempFile = file.myFile;
+	    	}
+	    	var formData = new FormData();
+	    	formData.append("file", tempFile);
+	    	$('#'+fileID).find('td').eq(4).find('span').empty();
+	    	$('#'+fileID).find('.font-state').data('state','1');
+	    	
+	    	$.ajax({
+	            url:basePath + '/pdf/uploadFile/'+fileID,
+	            dataType:'json',
+	            type:'POST',
+	            data: formData,
+	            processData : false, 
+	            contentType : false, 
+	            success: function(data){
+	            },
+	            error:function(response){
+	            }
+	        });
+	    }
+	    
+	    $('#transfer_all_btn').click(function(){
+	    	if($('#position_tbody tr').length < 1){
+	    		alert("请先选择需要转换的文件");
+	            return;
+	    	}
+	    	$('#position_tbody tr').each(function(){
+	    		var fileName = $(this).find('td').eq(1).find('span').html();
+	    		if(!fileName){
+	    			$(this).remove();
+	    			return;
+	    		}
+	    		var state = $(this).find('.font-state').data('state');
+	    		if('9' == state){
+	    			uploadSingle($(this).find('td').eq(4).find('a')[0]);
+	    		}
+	    	});
+	    });
+	    
+	    $('#add_files_btn').click(function(){
+	    	$('#fileFolder').click();
+	    });
+	    
+	    $('#fileFolder').change(function(){
+	    	var files = this.files
+	    	$(files).each(function(i,file){
+                if(!checkFileType(file.name)){
+                    return;
+                };
+                var data = {'seqNo': getSeqNo()};
+                var tr = Temple.load('pdf_td_tr', data);
+                $('#position_tbody').append(tr);
+                var seleter = $('#position_tbody tr').last();
+                seleter.find('input[type="file"]')[0].myFile = file;
+                seleter.find('input[type="file"]').next('span').html(file.name);
+                seleter.show();
+            }); 
+	    });
+	    
+	    $('#drag_area').initDrag({
+	    	overed: function(files) {
+	    		$(files).each(function(i,file){
+	    			if(!checkFileType(file.name)){
+	    				alert('仅支持office word、excel、ppt办公文件转换,请重新选择');
+	    				return;
+	    			};
+	    			var data = {'seqNo': getSeqNo()};
+	                var tr = Temple.load('pdf_td_tr', data);
+	                $('#position_tbody').append(tr);
+	                var seleter = $('#position_tbody tr').last();
+	                seleter.find('input[type="file"]')[0].myFile = file;
+	                seleter.find('input[type="file"]').next('span').html(file.name);
+	                seleter.show();
+	    		}); 
+	    	}
+	    });
+	    
+	</script>
+	</body>
+</html>

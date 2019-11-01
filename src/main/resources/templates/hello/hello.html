@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>成功测试页面</title>
+<script th:src="@{/assets/global/plugins/jquery.min.js}"></script>
+</head>
+
+<body>
+    <p>测试页面： <i th:text="${text}" ></i></p>
+    <p>jpa数据库请求：<i th:text="${name2}" ></i></p>
+    
+<script th:inline="javascript">
+    var num = [[${text}]];
+    
+    var path = [[${#httpServletRequest.getContextPath()}]];
+    var root = [[${#servletContext.contextPath}]];
+</script>      
+</body>
+</html>

@@ -1,0 +1,62 @@
+@charset "utf-8";
+/* CSS Document duanqiang 2019-07-03 */
+/*公共样式表*/
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, 
+strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, 
+tfoot, thead, tr, th, td ,textarea,input {margin:0;padding:0;}
+address,cite,dfn,em,var, i {font-style:normal;}
+body {font-size: 14px;line-height: 1.5;font-family:'Microsoft Yahei','微软雅黑','simsun','arial','tahoma';color: #333;}
+table{
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 0;
+}
+table th,td{
+    padding: 0;
+}
+h1, h2, h3, h4, h5, h6, th { font-size:100%;font-weight:normal;}
+button,input,select,textarea {font-size:100%;}
+fieldset,img {border:0;}
+a,img {-webkit-touch-callout:none;}
+a,a:active,a:focus,a:hover,a:visited {text-decoration:none;}
+input[type=password],input[type=text],textarea {
+    resize:none;
+    outline:0;
+    -webkit-appearance:none;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    background:#fff;
+}
+ul, ol {list-style:none;}
+:focus {outline:none;}
+.clear {clear:both;}
+.ms-controller{  /**防止avalon初始没有值出现大括号 **/
+   visibility: hidden;
+}
+strong,em,b {font-weight:normal;font-style:normal;}
+
+.progress{
+	display: inline-block;
+	margin: -2px auto !important;
+	height: 12px;
+	width: 200px;
+	border: 1px solid #106398;
+	text-align: left;
+	background: #e2e2e2;
+	position: relative;
+}
+
+.progress i{
+    display: inline-block;
+    height: 12px;
+    background: #106398;
+    position: absolute;
+}
+
+table tr td font {
+	width: 80px;
+    display: inline-block;
+}
+
+
+

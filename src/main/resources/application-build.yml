@@ -1,0 +1,40 @@
+server: 
+  port: 8080
+  servlet:
+    context-path: /conversion
+    
+spring:
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    enable-spring-el-compiler: true
+    content-type: text/html
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+    
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@127.0.0.1:1521/orcl
+    username: root
+    password: 123456
+    
+  jpa:
+    show-sql: true  
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.Oracle10gDialect
+        
+jodconverter:
+  local:
+    enabled: true
+    office-home: C:/Develop/offic/OpenOffice4
+    max-tasks-per-process: 10
+    port-numbers: 8100
