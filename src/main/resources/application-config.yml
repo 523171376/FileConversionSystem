@@ -1,0 +1,5 @@
+path:
+  upload_pdf_ofile_path: "C:\\zhpt\\file\\pdf\\oldfile\\"
+  upload_pdf_pdffile_path: "C:\\zhpt\\file\\pdf\\newfile\\"
+  upload_word_pfile_path: "C:\\zhpt\\file\\word\\oldfile\\"
+  upload_word_wfile_path: "C:\\zhpt\\file\\word\\newfile\\"

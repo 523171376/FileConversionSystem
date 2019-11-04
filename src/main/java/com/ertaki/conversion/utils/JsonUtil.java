@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * 
  * @ClassName:  JsonUtil   
  * @Description:JSON格式化工具类，JSON字符串和对象的转换  
- * @author: 锋华科技 
+ * @author: ZWC
  * @date:   2018-3-26 上午9:32:53   
  *     
  * @Copyright: 2018 xafh All rights reserved. 

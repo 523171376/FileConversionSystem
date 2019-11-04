@@ -1,4 +1,4 @@
-package com.ertaki.conversion.service.pdf;
+package com.ertaki.conversion.service.word;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,14 +16,14 @@ import com.ertaki.conversion.socket.WebSocketServer;
 import com.ertaki.conversion.utils.ResponseData;
 
 @Service
-public class PdfServiceImpl implements IPdfService{
+public class WordServiceImpl implements IWordService{
     @Autowired
     private DocumentConverter documentConverter; 
     
-    @Value("${path.upload_pdf_ofile_path}")
-    private String UPLOAD_PDF_OFILE_PATH; 
-    @Value("${path.upload_pdf_pdffile_path}")
-    private String UPLOAD_PDF_PDFFILE_PATH; 
+    @Value("${path.upload_word_pfile_path}")
+    private String UPLOAD_WORD_PFILE_PATH; 
+    @Value("${path.upload_word_wfile_path}")
+    private String UPLOAD_WORD_WFILE_PATH; 
     
     @Override
     public void uploadFileAndSend(MultipartFile file, String fileID, String userID) throws Exception {
@@ -31,11 +31,11 @@ public class PdfServiceImpl implements IPdfService{
         rd.setFileID(fileID);
         
         String fileName = file.getOriginalFilename();
-        File dest = new File(UPLOAD_PDF_OFILE_PATH + fileName);
+        File dest = new File(UPLOAD_WORD_PFILE_PATH + fileName);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        File pdfFile = new File(UPLOAD_PDF_PDFFILE_PATH + fileName + ".pdf");
+        File pdfFile = new File(UPLOAD_WORD_WFILE_PATH + fileName + ".pdf");
         if (!pdfFile.getParentFile().exists()) {
             pdfFile.getParentFile().mkdirs();
         }

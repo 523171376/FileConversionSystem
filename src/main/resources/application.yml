@@ -1,5 +1,8 @@
 spring:
   profiles:
-    active: build
+    active: 
+      - build 
+      - config
     #active: release 
+    
          

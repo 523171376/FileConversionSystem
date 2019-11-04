@@ -6,7 +6,7 @@ import java.util.Map;
  * 返回数据类
  * @ClassName:  ResponseData   
  * @Description:TODO  返回信息，返回编码，返回数据
- * @author: 锋华科技 
+ * @author: ZWC
  * @date:   2018-4-11 下午4:09:50   
  *     
  * @Copyright: 2018 xafh All rights reserved. 

@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ertaki.conversion.entity.UserVO;
-import com.ertaki.conversion.service.pdf.IPdfService;
+import com.ertaki.conversion.service.word.IWordService;
 
 @Controller
-@RequestMapping("/pdf")
-public class TransPdfController {
+@RequestMapping("/word")
+public class TransWordController {
     @Autowired
-    private IPdfService pdfService;
+    private IWordService wordService;
     
     @RequestMapping("/uploadFile/{fileID}")
     @ResponseBody
@@ -28,7 +28,7 @@ public class TransPdfController {
         }
         UserVO user = getUser(request);
         try {
-            pdfService.uploadFileAndSend(file, fileID, user.getUserID());
+            wordService.uploadFileAndSend(file, fileID, user.getUserID());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -202,8 +202,9 @@ body.indexBody {
     background-size: 100% 100%;
 }
 .file_main i.word {
-	height:94px;
+	height:36px;
 	background:url("../images/Word.png") no-repeat;
+    background-size: 100% 100%;
 }
 .file_main span {
 	display:block;
