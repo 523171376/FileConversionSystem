@@ -4,6 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.ertaki.conversion.utils.linstener.ProgressListener;
 
@@ -72,6 +79,28 @@ public class FileUtil {
             } catch (IOException e) {
             }
         }
+    }
+    
+    /**
+     * 文件下载
+     */
+    public ResponseEntity<InputStreamResource> downloadFile(String fileName){
+        FileSystemResource file = new FileSystemResource(fileName);
+        HttpHeaders headers = new HttpHeaders();  
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");  
+        try {
+            headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", new String(file.getFilename().getBytes("utf-8"), "ISO-8859-1")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }  
+        headers.add("Pragma", "no-cache");  
+        headers.add("Expires", "0"); 
+        try {
+            return new ResponseEntity<InputStreamResource>(new InputStreamResource(file.getInputStream()), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<InputStreamResource>(null, headers, HttpStatus.BAD_REQUEST);
     }
     
     public static double formartFileSize(long size) {
