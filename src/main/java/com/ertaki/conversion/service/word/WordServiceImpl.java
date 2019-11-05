@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -66,7 +67,7 @@ public class WordServiceImpl implements IWordService{
         try {
             doc = PDDocument.load(dest);
             fos = new FileOutputStream(wordFile);
-            writer = new OutputStreamWriter(fos);
+            writer = new OutputStreamWriter(fos, Charset.defaultCharset());
             stripper = new PDFTextStripper();
             int pageNum = doc.getNumberOfPages();
             stripper.setSortByPosition(true);
@@ -99,12 +100,4 @@ public class WordServiceImpl implements IWordService{
         }
     }
     
-    public static void main(String[] args) {
-        
-        System.out.println(FileUtil.formartFileSize(1234123));
-        int currentSize = 222;
-        int size = 12312;
-        double a = FileUtil.progressCalculate(currentSize, size);
-        System.out.println(a);
-    }
 }
