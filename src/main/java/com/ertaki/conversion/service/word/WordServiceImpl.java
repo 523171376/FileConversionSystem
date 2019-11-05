@@ -2,24 +2,23 @@ package com.ertaki.conversion.service.word;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
-import org.jodconverter.DocumentConverter;
-import org.jodconverter.office.OfficeException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ertaki.conversion.constants.AppConfig;
 import com.ertaki.conversion.socket.WebSocketServer;
+import com.ertaki.conversion.utils.FileUtil;
 import com.ertaki.conversion.utils.ResponseData;
 
 @Service
 public class WordServiceImpl implements IWordService{
-    @Autowired
-    private DocumentConverter documentConverter; 
-    
     @Value("${path.upload_word_pfile_path}")
     private String UPLOAD_WORD_PFILE_PATH; 
     @Value("${path.upload_word_wfile_path}")
@@ -35,71 +34,77 @@ public class WordServiceImpl implements IWordService{
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        File pdfFile = new File(UPLOAD_WORD_WFILE_PATH + fileName + ".pdf");
-        if (!pdfFile.getParentFile().exists()) {
-            pdfFile.getParentFile().mkdirs();
+        File wordFile = new File(UPLOAD_WORD_WFILE_PATH + fileName + AppConfig.FILE_SUFFIX_WORD);
+        if (!wordFile.getParentFile().exists()) {
+            wordFile.getParentFile().mkdirs();
         }
         
-        InputStream is = null;
-        FileOutputStream fo = null;
-        try {
-            rd.setFileSize(Math.round((file.getSize() / 1024) * 100) / 100);
+        rd.setFileSize(FileUtil.formartFileSize(file.getSize()));
+        WebSocketServer.send(rd, userID);
+        double size = file.getBytes().length;
+        
+        FileUtil.getDefault().uploadFile(file.getInputStream(), dest, currentSize -> {
+            rd.setProgress(FileUtil.progressCalculate(currentSize, size));
             WebSocketServer.send(rd, userID);
-            
-            is = file.getInputStream();
-            fo = new FileOutputStream(dest);
-            double size = file.getBytes().length;
-            int len = 0,i = 1;
-            byte[] buffer = new byte[1024 * 4]; 
-            while ((len = is.read(buffer)) != -1){
-                fo.write(buffer,0,len);
-                double progress = (double) Math.round(((4096 * i++) / size) * 10000) / 100;
-                rd.setProgress(progress);
-                WebSocketServer.send(rd, userID);
-                Thread.sleep(30);
-            }
-            
-            rd.setFinshed("1");
-            rd.setProgress(100.0d);
-            WebSocketServer.send(rd, userID);
-        } catch (IOException e) {
-            throw e;
-        }finally {
-            try {
-                if(is != null) {
-                    is.close();
-                }
-                if(fo != null) {
-                    fo.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+        });
+        
+        rd.setFinshed("1");
+        rd.setProgress(100.0d);
+        WebSocketServer.send(rd, userID);
+        
+        //FIX ME 仅测试进度效果使用，使用时删除
+        Thread.sleep(200);
         
         rd.setFinshed("2");
         rd.setProgress(0d);
         WebSocketServer.send(rd, userID);
+        
+        PDDocument doc = null;
+        OutputStream fos = null;
+        Writer writer = null;
+        PDFTextStripper stripper = null;
         try {
-            documentConverter.convert(dest).to(pdfFile).execute();
-//            //FIX ME重写源码添加监听，实现进度显示
-//            documentConverter.convert(dest).to(pdfFile).execute(new ProgressListener() {
-//                @Override
-//                public void getProgress(double totalSize, double currentSize) {
-//                    double progress = (double) Math.round((currentSize / totalSize) * 10000) / 100;
-//                    rd.setProgress(progress);
-//                    WebSocketServer.send(rd, userID);
-//                }
-//            });
+            doc = PDDocument.load(dest);
+            fos = new FileOutputStream(wordFile);
+            writer = new OutputStreamWriter(fos);
+            stripper = new PDFTextStripper();
+            int pageNum = doc.getNumberOfPages();
+            stripper.setSortByPosition(true);
+            stripper.setStartPage(1);
+            stripper.setEndPage(pageNum);
+//            stripper.writeText(doc, writer);
+            //重写源码添加监听
+            stripper.writeText(doc, writer, currentPage -> {
+                rd.setProgress(FileUtil.progressCalculate(currentPage, pageNum));
+                WebSocketServer.send(rd, userID);
+            });
             
             rd.setFinshed("3");
             rd.setProgress(100.0d);
             WebSocketServer.send(rd, userID);
-        } catch (OfficeException e) {
+        } catch (Exception e) {
             rd.setFinshed("9");
             WebSocketServer.send(rd, userID);
             e.printStackTrace();
+        }finally {
+            if(writer != null) {
+                writer.close();
+            }
+            if(fos != null) {
+                fos.close();
+            }
+            if(doc != null) {
+                doc.close();
+            }
         }
-
     }
     
+    public static void main(String[] args) {
+        
+        System.out.println(FileUtil.formartFileSize(1234123));
+        int currentSize = 222;
+        int size = 12312;
+        double a = FileUtil.progressCalculate(currentSize, size);
+        System.out.println(a);
+    }
 }

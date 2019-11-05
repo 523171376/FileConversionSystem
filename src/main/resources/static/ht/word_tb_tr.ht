@@ -1,0 +1,17 @@
+<tr style="display:none;" id="${seqNo }">
+    <td>${seqNo }</td>
+    <td><input type="file" style="display:none;" accept=".pdf"><span></span></td>
+    <td></td>
+    <td>
+        <span class="progress"><i style="width: 0px;"></i></span>
+        <font class="font-num">0.0%</font>
+        <font class="font-state" data-state="9">准备上传</font>    
+    </td>
+    <td>
+        <span>
+            <a href="javascript:void(0)" onclick="uploadSingle(this)">[上传并转换]</a>
+        </span>
+    </td>
+</tr>
+ 
+

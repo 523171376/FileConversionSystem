@@ -1,9 +1,16 @@
 package com.ertaki.conversion.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.ertaki.conversion.utils.linstener.ProgressListener;
+
 /**
  * @ClassName:  FileUtil   
  * @author: ZWC
- * @date:   2019-10-26 上午9:32:53   
+ * @date:   2019-11-4 上午18:32:53   
  *     
  * @Copyright: 2018 xafh All rights reserved. 
  * 注意：本内容仅限内部传阅，禁止外泄以及用于其他的商业目
@@ -31,6 +38,47 @@ public class FileUtil {
         return instance;
     }
     
+    /**
+     * 文件上传
+     * 
+     */
+    public void uploadFile(InputStream stream, File dest, ProgressListener listener) throws IOException{
+        InputStream is = null;
+        FileOutputStream fo = null;
+        try {
+            is = stream;
+            fo = new FileOutputStream(dest);
+            int len = 0,i = 1;
+            byte[] buffer = new byte[1024 * 4]; 
+            while ((len = is.read(buffer)) != -1){
+                fo.write(buffer,0,len);
+                listener.getProgress(4096 * i++);
+                //FIX ME 仅测试进度效果使用，使用时删除
+                try {
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                }
+            }
+        } catch (IOException e) {
+            throw e;
+        }finally {
+            try {
+                if(is != null) {
+                    is.close();
+                }
+                if(fo != null) {
+                    fo.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
     
-
+    public static double formartFileSize(long size) {
+        return (double)Math.round((size / 1024) * 100) / 100;
+    }
+    
+    public static double progressCalculate(double currentNum, double totalNum) {
+        return (double)Math.round((currentNum / totalNum) * 10000) / 100;
+    }
 }

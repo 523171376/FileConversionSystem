@@ -8,11 +8,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 
  * @ClassName:  JsonUtil   
- * @Description:JSON格式化工具类，JSON字符串和对象的转换  
  * @author: ZWC
- * @date:   2018-3-26 上午9:32:53   
+ * @date:   2019-11-2 上午9:30:53   
  *     
  * @Copyright: 2018 xafh All rights reserved. 
  * 注意：本内容仅限内部传阅，禁止外泄以及用于其他的商业目

@@ -1,9 +1,6 @@
 package com.ertaki.conversion.service.pdf;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import org.jodconverter.DocumentConverter;
 import org.jodconverter.office.OfficeException;
@@ -12,7 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ertaki.conversion.constants.AppConfig;
 import com.ertaki.conversion.socket.WebSocketServer;
+import com.ertaki.conversion.utils.FileUploadUtils;
+import com.ertaki.conversion.utils.FileUtil;
 import com.ertaki.conversion.utils.ResponseData;
 
 @Service
@@ -35,58 +35,39 @@ public class PdfServiceImpl implements IPdfService{
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        File pdfFile = new File(UPLOAD_PDF_PDFFILE_PATH + fileName + ".pdf");
+        File pdfFile = new File(UPLOAD_PDF_PDFFILE_PATH + fileName + AppConfig.FILE_SUFFIX_PDF);
         if (!pdfFile.getParentFile().exists()) {
             pdfFile.getParentFile().mkdirs();
         }
         
-        InputStream is = null;
-        FileOutputStream fo = null;
-        try {
-            rd.setFileSize(Math.round((file.getSize() / 1024) * 100) / 100);
-            WebSocketServer.send(rd, userID);
-            
-            is = file.getInputStream();
-            fo = new FileOutputStream(dest);
-            double size = file.getBytes().length;
-            int len = 0,i = 1;
-            byte[] buffer = new byte[1024 * 4]; 
-            while ((len = is.read(buffer)) != -1){
-                fo.write(buffer,0,len);
-                double progress = (double) Math.round(((4096 * i++) / size) * 10000) / 100;
-                rd.setProgress(progress);
+        rd.setFileSize(FileUtil.formartFileSize(file.getSize()));
+        WebSocketServer.send(rd, userID);
+        double size = file.getBytes().length;
+        
+        new FileUploadUtils().source(file.getInputStream()).to(dest)
+            .execute(currentSize -> {
+                rd.setProgress(FileUtil.progressCalculate(currentSize, size));
                 WebSocketServer.send(rd, userID);
-                Thread.sleep(30);
-            }
-            
-            rd.setFinshed("1");
-            rd.setProgress(100.0d);
-            WebSocketServer.send(rd, userID);
-        } catch (IOException e) {
-            throw e;
-        }finally {
-            try {
-                if(is != null) {
-                    is.close();
-                }
-                if(fo != null) {
-                    fo.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+            });
+        
+        rd.setFinshed("1");
+        rd.setProgress(100.0d);
+        WebSocketServer.send(rd, userID);
+        
+        //FIX ME 仅测试进度效果使用，使用时删除
+        Thread.sleep(200);
         
         rd.setFinshed("2");
         rd.setProgress(0d);
         WebSocketServer.send(rd, userID);
+        
         try {
             documentConverter.convert(dest).to(pdfFile).execute();
-//            //FIX ME重写源码添加监听，实现进度显示
+//            //FIX ME重写源码添加监听
 //            documentConverter.convert(dest).to(pdfFile).execute(new ProgressListener() {
 //                @Override
 //                public void getProgress(double totalSize, double currentSize) {
-//                    double progress = (double) Math.round((currentSize / totalSize) * 10000) / 100;
-//                    rd.setProgress(progress);
+//                    rd.setProgress(FileUtil.progressCalculate(currentSize, totalSize));
 //                    WebSocketServer.send(rd, userID);
 //                }
 //            });

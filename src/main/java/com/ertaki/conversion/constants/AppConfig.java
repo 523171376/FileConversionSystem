@@ -20,4 +20,15 @@ public class AppConfig {
     public static final String OPEN_OFFICE_HOST = "127.0.0.1";
     /** openoffice 启动端口号地址   */
     public static final int OPEN_OFFICE_PORT = 8100;
+    
+    /** 文件类型 pdf   */
+    public static final String FILE_TYPE_PDF = "1";
+    /** 文件类型 word   */
+    public static final String FILE_TYPE_WORD = "2";
+    /** 文件后缀   */
+    public static final String FILE_SUFFIX_PDF = ".pdf";
+    /** 文件后缀   */
+    public static final String FILE_SUFFIX_WORD = ".doc";
+    /** word默认编码   */
+    public static final String WORD_DEFAULT_CHARSET = "GB2312";
 }

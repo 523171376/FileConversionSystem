@@ -22,6 +22,9 @@
 		<ojdbc.version>11.2.0.4.0</ojdbc.version>
 		<openoffice.version>4.2.2</openoffice.version>
 		<jodconverter.version>2.2.2</jodconverter.version>
+		<pdfbox.version>2.0.12</pdfbox.version>
+		<jbig2.version>2.0</jbig2.version>
+		<logging.version>1.2</logging.version>
 	</properties>
 
 	<dependencies>
@@ -55,6 +58,7 @@
             <version>${ojdbc.version}</version>
         </dependency>
 
+        <!-- office转pef start -->
         <dependency>
             <groupId>org.jodconverter</groupId>
             <artifactId>jodconverter-spring-boot-starter</artifactId>
@@ -70,6 +74,35 @@
             <artifactId>jodconverter-local</artifactId>
             <version>${openoffice.version}</version>
         </dependency>
+        <!-- office转pef end -->
+		
+		<!-- pdf转word start -->
+		<dependency>
+           <groupId>commons-logging</groupId>
+           <artifactId>commons-logging</artifactId>
+           <version>${logging.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>fontbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.levigo.jbig2</groupId>
+            <artifactId>levigo-jbig2-imageio</artifactId>
+            <version>${jbig2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <!-- pdf转word end -->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
