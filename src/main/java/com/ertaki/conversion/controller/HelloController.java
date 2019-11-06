@@ -32,6 +32,12 @@ public class HelloController {
         return "hello/hello_socket";
     }
     
+    @RequestMapping("/demodata")
+    @ResponseBody
+    public Object demodata() {
+        return "";
+    }
+    
     @RequestMapping("/uploadTest/{sid}")
     @ResponseBody
     public void uploadTest(@PathVariable("sid") String sid) {

@@ -1,0 +1,22 @@
+table {
+	text-align: center;
+}
+
+table thead tr th{
+	border-right: 1px solid #FFFFFF;
+    padding: 8px 4px;
+    background: #34bfa3;
+}
+
+table tbody tr td{
+    border: 1px solid #e2e2e2;
+    padding: 4px 2px;
+}
+
+table thead tr,table tbody tr{
+    height: 38px;
+}
+
+table tbody tr:nth-child(even){
+    background: #e8f8f4;
+}

@@ -1,0 +1,5 @@
+<div class="btn-group" role="group" aria-label="First group">
+    <button type="button" class="m-btn btn btn-sm btn-info" title="下载" onclick="downloadSingle(this)">
+        <i class="la la-cloud-download"></i>
+    </button>
+</div>
